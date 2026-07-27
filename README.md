@@ -1,29 +1,69 @@
-# Education Pals Build Pack
+# Where Will This Fine-Tune Break? — Pre-Flight Check
 
-- Course: `2ad65768-198c-5614-ba63-948602ecc629`
-- Chapter: `4a4ae561-8dac-521c-95c0-3be3b28ca295`
-- Template: `baw_c002_ch06`
-- Compiled: 2026-07-27T20:01:04.072Z
-- Verification token: `01KYJJNA283HGJB1WAFG0THYX5`
-- Composition mode: `shipgen`
-- Workshop publication: `01KYJJN2V4DYYTJ37XC364V8A8`
-- Proof challenge: `7c4d898cc65da43fc8e33beed0c6ae56`
-- Artifact type: `baw.v3`
-- Repository: https://github.com/educationpals-builds/ada-tester-where-will-this-fine-tune-break-pre-flig
+A systematic audit bench for identifying failure points in open models before you commit compute to fine-tuning.
 
-## Variants
+## The Specimen
 
-- `README.md` → `README.md`
-- `charter.md` → `charter.md`
-- `blueprints/pre-flight-bench.md` → `blueprints/pre-flight-bench.md`
-- `prompts/clause-walk-pack.md` → `prompts/clause-walk-pack.md`
-- `METHOD.md` → `METHOD.md`
-- `VERIFY.md` → `VERIFY.md`
-- `.ep/provenance.json` → `.ep/provenance.json.md`
+Any open-weights model checkpoint or training configuration you're about to fine-tune. The bench examines:
+- Model architecture definitions
+- Training hyperparameters
+- Data pipeline code
+- Normalization and initialization schemes
+- Loss function implementations
+
+## The Verdict
+
+Each audit produces one of three outcomes:
+
+| Verdict | Meaning |
+|---------|--------|
+| **CLEAR** | No blocking issues found; proceed to training |
+| **CONDITIONAL** | Issues found but mitigable; document fixes before launch |
+| **HOLD** | Critical issues require resolution before any compute spend |
+
+## The Tripwire
+
+Automated checks that halt training if:
+- Gradient norm exceeds 10× baseline for 3 consecutive steps
+- Loss becomes NaN or Inf
+- Memory allocation fails silently (returns zeros)
+- Checkpoint save fails without explicit error
+
+## One-Paste Rebuild Block
+
+```bash
+# Clone and run pre-flight on your model
+git clone <this-repo> preflight-bench
+cd preflight-bench
+
+# Paste your model config into specimen.yaml, then:
+python -c "
+import yaml
+with open('specimen.yaml') as f:
+    config = yaml.safe_load(f)
+print('Specimen loaded:', config.get('model_name', 'unnamed'))
+print('Ready for clause walk. See prompts/clause-walk-pack.md')
+"
+```
+
+## Quick Start
+
+1. Read `METHOD.md` for the framework
+2. Copy your model code/config as the specimen
+3. Run each prompt from `prompts/clause-walk-pack.md`
+4. Compile findings into `charter.md` format
+5. Verify with `VERIFY.md` procedure
 
 ## Files
 
-- `manifest.json` — verification manifest
-- `instructions.md` — paste tips per variant
+- `charter.md` — Full audit template with all five clauses
+- `blueprints/pre-flight-bench.md` — Auditor specification
+- `prompts/clause-walk-pack.md` — Standalone prompts for each clause
+- `METHOD.md` — The BREAK framework
+- `VERIFY.md` — Stranger verification procedure
+
+---
+
+*Provenance: ai_drafted, disclosed per `.ep/provenance.json`*
 
 <!-- educationpals-build-verified -->
